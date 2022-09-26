@@ -27,7 +27,7 @@ test-watch: clear
 
 lint-pre:
 	@gofumpt -l cmd common keygen keysign messages p2p storage tss # for display
-	@test -z "$(shell gofumpt -l cmd common keygen keysign messages p2p storage tss)" # cause error
+	@test -z "$(gofumpt -l cmd common keygen keysign messages p2p storage tss)" # cause error
 	@go mod verify
 
 lint: lint-pre

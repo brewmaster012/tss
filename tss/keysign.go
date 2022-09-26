@@ -1,6 +1,7 @@
 package tss
 
 import (
+	"context"
 	"encoding/base64"
 	"errors"
 	"fmt"
@@ -281,24 +282,19 @@ func (t *TssServer) KeySign(req keysign.Request) (keysign.Response, error) {
 	wg := sync.WaitGroup{}
 	wg.Add(2)
 	keysignStartTime := time.Now()
+
+	ctx, cancel := context.WithTimeout(context.Background(), t.conf.KeySignTimeout)
+	defer cancel()
 	// we wait for signatures
 	go func() {
-		defer wg.Done()
-		receivedSig, errWait = t.waitForSignatures(msgID, req.PoolPubKey, msgsToSign, sigChan)
-		// we received an valid signature indeed
-		if errWait == nil {
-			sigChan <- "signature received"
-			t.logger.Log().Msgf("for message %s we get the signature from the peer", msgID)
-			return
-		}
-		t.logger.Log().Msgf("we fail to get the valid signature with error %v", errWait)
+		receivedSig, errWait = t.wait4Signatures(ctx, &wg, msgID, req.PoolPubKey, msgsToSign, sigChan)
 	}()
 
 	// we generate the signature ourselves
 	go func() {
-		defer wg.Done()
-		generatedSig, errGen = t.generateSignature(msgID, msgsToSign, req, threshold, localStateItem.ParticipantKeys, localStateItem, blameMgr, keysignInstance, sigChan)
+		generatedSig, errGen = t.generateOurSignature(ctx, &wg, msgID, msgsToSign, req, threshold, localStateItem.ParticipantKeys, localStateItem, blameMgr, keysignInstance, sigChan)
 	}()
+
 	wg.Wait()
 	close(sigChan)
 	keysignTime := time.Since(keysignStartTime)
@@ -315,6 +311,50 @@ func (t *TssServer) KeySign(req keysign.Request) (keysign.Response, error) {
 	// we get the signature from our tss keysign
 	t.updateKeySignResult(generatedSig, keysignTime)
 	return generatedSig, errGen
+}
+
+func (t *TssServer) wait4Signatures(ctx context.Context, wg *sync.WaitGroup, msgID, poolPubKey string, msgsToSign [][]byte, sigChan chan string) (keysign.Response, error) {
+	defer wg.Done()
+	var receivedSig keysign.Response
+	var errWait error
+
+	c := make(chan error, 1)
+	go func() {
+		receivedSig, errWait = t.waitForSignatures(msgID, poolPubKey, msgsToSign, sigChan)
+		// we received an valid signature indeed
+		if errWait == nil {
+			sigChan <- "signature received"
+			t.logger.Log().Msgf("for message %s we get the signature from the peer", msgID)
+		}
+		t.logger.Log().Msgf("we fail to get the valid signature with error %v", errWait)
+		c <- errWait
+	}()
+
+	select {
+	case <-ctx.Done():
+		return receivedSig, ctx.Err()
+	case err := <-c:
+		return receivedSig, err
+	}
+}
+
+func (t *TssServer) generateOurSignature(ctx context.Context, wg *sync.WaitGroup, msgID string, msgsToSign [][]byte, req keysign.Request, threshold int, allParticipants []string, localStateItem storage.KeygenLocalState, blameMgr *blame.Manager, keysignInstance *keysign.TssKeySign, sigChan chan string) (keysign.Response, error) {
+
+	defer wg.Done()
+	var generatedSig keysign.Response
+	var errGen error
+
+	c := make(chan error, 1)
+	go func() {
+		generatedSig, errGen = t.generateSignature(msgID, msgsToSign, req, threshold, localStateItem.ParticipantKeys, localStateItem, blameMgr, keysignInstance, sigChan)
+		c <- errGen
+	}()
+	select {
+	case <-ctx.Done():
+		return generatedSig, ctx.Err()
+	case err := <-c:
+		return generatedSig, err
+	}
 }
 
 func (t *TssServer) broadcastKeysignFailure(messageID string, peers []peer.ID) {

@@ -1,8 +1,8 @@
 package keysign
 
 import (
-	"gitlab.com/thorchain/tss/go-tss/blame"
-	"gitlab.com/thorchain/tss/go-tss/common"
+	"github.com/zeta-chain/go-tss-ctx/blame"
+	"github.com/zeta-chain/go-tss-ctx/common"
 )
 
 // signature

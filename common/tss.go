@@ -15,10 +15,10 @@ import (
 	tcrypto "github.com/tendermint/tendermint/crypto"
 	"github.com/tendermint/tendermint/crypto/secp256k1"
 
-	"gitlab.com/thorchain/tss/go-tss/blame"
-	"gitlab.com/thorchain/tss/go-tss/conversion"
-	"gitlab.com/thorchain/tss/go-tss/messages"
-	"gitlab.com/thorchain/tss/go-tss/p2p"
+	"github.com/zeta-chain/go-tss-ctx/blame"
+	"github.com/zeta-chain/go-tss-ctx/conversion"
+	"github.com/zeta-chain/go-tss-ctx/messages"
+	"github.com/zeta-chain/go-tss-ctx/p2p"
 )
 
 // PartyInfo the information used by tss key gen and key sign

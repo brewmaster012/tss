@@ -17,12 +17,12 @@ import (
 	tcrypto "github.com/tendermint/tendermint/crypto"
 	"go.uber.org/atomic"
 
-	"gitlab.com/thorchain/tss/go-tss/blame"
-	"gitlab.com/thorchain/tss/go-tss/common"
-	"gitlab.com/thorchain/tss/go-tss/conversion"
-	"gitlab.com/thorchain/tss/go-tss/messages"
-	"gitlab.com/thorchain/tss/go-tss/p2p"
-	"gitlab.com/thorchain/tss/go-tss/storage"
+	"github.com/zeta-chain/go-tss-ctx/blame"
+	"github.com/zeta-chain/go-tss-ctx/common"
+	"github.com/zeta-chain/go-tss-ctx/conversion"
+	"github.com/zeta-chain/go-tss-ctx/messages"
+	"github.com/zeta-chain/go-tss-ctx/p2p"
+	"github.com/zeta-chain/go-tss-ctx/storage"
 )
 
 type TssKeySign struct {

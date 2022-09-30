@@ -23,7 +23,7 @@ import (
 	"github.com/rs/zerolog/log"
 	maddr "github.com/multiformats/go-multiaddr"
 
-	"gitlab.com/thorchain/tss/go-tss/messages"
+	"github.com/zeta-chain/go-tss-ctx/messages"
 )
 
 var (

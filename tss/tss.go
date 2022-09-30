@@ -15,14 +15,14 @@ import (
 	"github.com/rs/zerolog/log"
 	tcrypto "github.com/tendermint/tendermint/crypto"
 
-	"gitlab.com/thorchain/tss/go-tss/common"
-	"gitlab.com/thorchain/tss/go-tss/conversion"
-	"gitlab.com/thorchain/tss/go-tss/keygen"
-	"gitlab.com/thorchain/tss/go-tss/keysign"
-	"gitlab.com/thorchain/tss/go-tss/messages"
-	"gitlab.com/thorchain/tss/go-tss/monitor"
-	"gitlab.com/thorchain/tss/go-tss/p2p"
-	"gitlab.com/thorchain/tss/go-tss/storage"
+	"github.com/zeta-chain/go-tss-ctx/common"
+	"github.com/zeta-chain/go-tss-ctx/conversion"
+	"github.com/zeta-chain/go-tss-ctx/keygen"
+	"github.com/zeta-chain/go-tss-ctx/keysign"
+	"github.com/zeta-chain/go-tss-ctx/messages"
+	"github.com/zeta-chain/go-tss-ctx/monitor"
+	"github.com/zeta-chain/go-tss-ctx/p2p"
+	"github.com/zeta-chain/go-tss-ctx/storage"
 )
 
 // TssServer is the structure that can provide all keysign and key gen features

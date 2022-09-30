@@ -1,4 +1,4 @@
-module = gitlab.com/thorchain/tss/go-tss
+module = github.com/zeta-chain/go-tss-ctx
 
 .PHONY: clear tools install test test-watch lint-pre lint lint-verbose protob build docker-gitlab-login docker-gitlab-push docker-gitlab-build
 
